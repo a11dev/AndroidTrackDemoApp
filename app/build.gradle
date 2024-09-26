@@ -1,6 +1,5 @@
 plugins {
     alias(libs.plugins.android.application)
-    alias(libs.plugins.jetbrains.kotlin.android)
 }
 
 android {
@@ -27,15 +26,56 @@ android {
         sourceCompatibility JavaVersion.VERSION_1_8
         targetCompatibility JavaVersion.VERSION_1_8
     }
-    kotlinOptions {
-        jvmTarget = '1.8'
-    }
 }
 
 dependencies {
 
-    implementation libs.androidx.core.ktx
+    implementation libs.appcompat
+    implementation libs.material
+    implementation libs.activity
+    implementation libs.constraintlayout
+    implementation libs.espresso.intents
     testImplementation libs.junit
-    androidTestImplementation libs.androidx.junit
-    androidTestImplementation libs.androidx.espresso.core
+    androidTestImplementation libs.ext.junit
+    androidTestImplementation libs.espresso.core
+    // Lifecycle components per ViewModel e LiveData (incluso supporto KTX)
+    implementation 'androidx.lifecycle:lifecycle-viewmodel-ktx:2.5.1'
+    implementation 'androidx.lifecycle:lifecycle-livedata:2.5.1'
+    implementation 'androidx.lifecycle:lifecycle-runtime:2.5.1'
+    implementation 'androidx.lifecycle:lifecycle-service:2.5.1'
+    implementation 'com.google.android.gms:play-services-location:21.0.1'
+    // RecyclerView per visualizzare la lista delle coordinate
+    implementation 'androidx.recyclerview:recyclerview:1.2.1'
+
+    // Test framework JUnit
+    testImplementation 'junit:junit:4.13.2'
+
+
+    // Mockito per i test unitari con mock
+    testImplementation 'org.mockito:mockito-core:3.12.4'
+
+    // Lifecycle Test Utilities per LiveData
+    testImplementation 'androidx.arch.core:core-testing:2.1.0'
+
+    // Lifecycle Test Utilities per LiveData - include InstantTaskExecutorRule
+    testImplementation 'androidx.arch.core:core-testing:2.1.0'
+    // Espresso per i test UI
+    androidTestImplementation 'androidx.test.espresso:espresso-core:3.5.1'
+    androidTestImplementation 'androidx.test.espresso:espresso-contrib:3.5.1'
+    androidTestImplementation 'androidx.test.espresso:espresso-intents:3.5.1'
+
+    // AndroidX Test - Core e Runner
+    androidTestImplementation 'androidx.test:core:1.5.0'
+    androidTestImplementation 'androidx.test:runner:1.5.2'
+    androidTestImplementation 'androidx.test:rules:1.5.0'
+    androidTestImplementation libs.core.testing
+
+    // Espresso core
+    androidTestImplementation 'androidx.test.espresso:espresso-core:3.5.1'
+    // AndroidX Test - Core e Runner
+    androidTestImplementation 'androidx.test:core:1.5.0'
+    androidTestImplementation 'androidx.test:runner:1.5.2'
+    androidTestImplementation 'androidx.test:rules:1.5.0'
+    // ActivityScenario
+    androidTestImplementation 'androidx.test:core:1.5.0'
 }

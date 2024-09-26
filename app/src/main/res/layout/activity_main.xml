@@ -1,0 +1,53 @@
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@android:color/white"
+    tools:context=".MainActivity">
+
+    <!-- TextView per visualizzare i parametri della URL -->
+    <TextView
+        android:id="@+id/parametersTextView"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_margin="16dp"
+        android:padding="8dp"
+        android:text="Parameters will appear here"
+        android:textColor="@android:color/black"
+        android:textSize="16sp" />
+
+    <!-- Button per avviare il tracking -->
+    <Button
+        android:id="@+id/startButton"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/parametersTextView"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="16dp"
+        android:background="@android:color/holo_blue_dark"
+        android:text="Start Tracking"
+        android:textColor="@android:color/white" />
+
+    <!-- TextView per visualizzare lo stato della raccolta coordinate -->
+    <TextView
+        android:id="@+id/statusTextView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/startButton"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="8dp"
+        android:text="Status: STOP"
+        android:textColor="@android:color/black"
+        android:textSize="16sp"/>
+
+    <!-- RecyclerView per visualizzare la lista delle coordinate -->
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/coordinatesRecyclerView"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_below="@id/statusTextView"
+        android:layout_alignParentBottom="true"
+        android:layout_margin="16dp"
+        android:background="@android:color/white"
+        android:scrollbars="vertical" />
+</RelativeLayout>

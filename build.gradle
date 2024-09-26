@@ -1,25 +1,4 @@
 // Top-level build file where you can add configuration options common to all sub-projects/modules.
 plugins {
 alias(libs.plugins.android.application) apply false
-    alias(libs.plugins.jetbrains.kotlin.android) apply false
-}
-
-android {
-    // ...
-
-    defaultConfig {
-        testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
-    }
-}
-
-dependencies {
-    // AndroidX Test libraries
-    androidTestImplementation 'androidx.test:runner:1.5.2'
-    androidTestImplementation 'androidx.test:rules:1.5.0'
-
-    // Espresso for UI tests
-    androidTestImplementation 'androidx.test.espresso:espresso-core:3.5.1'
-
-    // JUnit for testing framework
-    testImplementation 'junit:junit:4.13.2'
 }

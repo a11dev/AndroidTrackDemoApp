@@ -28,16 +28,17 @@ public class MainActivity extends AppCompatActivity {
     private List<String> coordinatesList;
     private Button startButton;
     private boolean isTracking = false;
-
+    public static final String STOP_DISPLAY_TRACKING = "dev.a11dev.trackapp.STOP_DISPLAY_TRACKING";
     // BroadcastReceiver per intercettare gli aggiornamenti delle coordinate
     private final BroadcastReceiver coordinateReceiver = new BroadcastReceiver() {
         @Override
         public void onReceive(Context context, Intent intent) {
             if (intent != null) {
                 // Aggiorna lo stato a STOP quando viene ricevuto l'Intent corrispondente
-                if (TrackingService.ACTION_STOP_TRACKING.equals(intent.getAction())) {
+                if (STOP_DISPLAY_TRACKING.equals(intent.getAction())) {
                     updateTrackingStatus(false);
                 } else if (TrackingService.ACTION_COORDINATE_UPDATE.equals(intent.getAction())) {
+                    updateTrackingStatus(true);
                     // Estrai la coordinata dall'Intent
                     String coordinate = intent.getStringExtra(TrackingService.EXTRA_COORDINATE);
                     if (coordinate != null) {
@@ -47,7 +48,10 @@ public class MainActivity extends AppCompatActivity {
                         // Notifica l'adapter che i dati sono cambiati
                         coordinateAdapter.notifyDataSetChanged();
                     }
+                } else {
+                    Log.d(TAG, "intent unknown: "+intent.getAction());
                 }
+
             }
         }
     };
@@ -73,7 +77,15 @@ public class MainActivity extends AppCompatActivity {
         startButton = findViewById(R.id.startButton);
 
         // Registra il BroadcastReceiver per ascoltare gli Intent ACTION_COORDINATE_UPDATE
-        IntentFilter filter = new IntentFilter(TrackingService.ACTION_COORDINATE_UPDATE);
+        // Creare un IntentFilter
+        IntentFilter filter = new IntentFilter();
+
+        // Aggiungi la prima azione
+        filter.addAction(TrackingService.ACTION_COORDINATE_UPDATE);
+
+        // Aggiungi la seconda azione
+        filter.addAction(MainActivity.STOP_DISPLAY_TRACKING);
+
         registerReceiver(coordinateReceiver, filter);
 
 

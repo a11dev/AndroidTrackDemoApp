@@ -5,6 +5,8 @@
     <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
     <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
     <uses-permission android:name="android.permission.FOREGROUND_SERVICE" />
+    <uses-permission android:name="android.permission.FOREGROUND_SERVICE_LOCATION" />
+
     <application
         android:allowBackup="true"
         android:label="TrackApp"
@@ -37,23 +39,26 @@
             </intent-filter>
         </activity>
 
-        <!-- Altre componenti come servizi e ricevitori -->
-        <service android:name=".TrackingService"
-            android:exported="true">
-            <intent-filter>
-                <action android:name="dev.a11dev.trackapp.START"/>
-                <action android:name="dev.a11dev.trackapp.STOP"/>
-            </intent-filter>
+        <service
+            android:name=".TrackingService"
+            android:exported="true"
+            android:foregroundServiceType="location">
         </service>
 
-        <receiver android:name=".TrackingReceiver"
+        <receiver
+            android:name=".StopTrackingReceiver"
             android:exported="true">
             <intent-filter>
-                <action android:name="dev.a11dev.trackapp.START"/>
-                <action android:name="dev.a11dev.trackapp.STOP"/>
+                <action android:name="dev.a11dev.trackapp.ACTION_STOP_TRACKING" />
             </intent-filter>
         </receiver>
-
+        <receiver
+            android:name=".StartTrackingReceiver"
+            android:exported="true">
+            <intent-filter>
+                <action android:name="dev.a11dev.trackapp.ACTION_START_TRACKING" />
+            </intent-filter>
+        </receiver>
     </application>
 
 </manifest>

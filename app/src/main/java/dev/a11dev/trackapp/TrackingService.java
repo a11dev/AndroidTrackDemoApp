@@ -1,11 +1,16 @@
 package dev.a11dev.trackapp;
 
+import android.app.Notification;
+import android.app.NotificationChannel;
+import android.app.NotificationManager;
+import android.app.PendingIntent;
 import android.app.Service;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.location.Location;
+import android.os.Build;
 import android.os.IBinder;
 import android.os.Looper;
 import android.util.Log;
@@ -27,15 +32,31 @@ public class TrackingService extends Service {
     public static final String ACTION_COORDINATE_UPDATE = "dev.a11dev.trackapp.ACTION_COORDINATE_UPDATE";
     public static final String EXTRA_COORDINATE = "dev.a11dev.trackapp.EXTRA_COORDINATE";
     public static final String ACTION_STOP_TRACKING = "dev.a11dev.trackapp.ACTION_STOP_TRACKING";
-
+    public static final String ACTION_START_TRACKING= "dev.a11dev.trackapp.ACTION_START_TRACKING";
     private FusedLocationProviderClient fusedLocationClient;
     private LocationCallback locationCallback;
     private BroadcastReceiver stopTrackingReceiver;
+    private static final String CHANNEL_ID = "TrackingServiceChannel";
 
     @Override
     public void onCreate() {
         super.onCreate();
 
+        // Crea e avvia il servizio come foreground
+        createNotificationChannel();
+
+        Intent notificationIntent = new Intent(this, MainActivity.class);
+        PendingIntent pendingIntent = PendingIntent.getActivity(this, 0, notificationIntent,  PendingIntent.FLAG_IMMUTABLE);
+
+        Notification notification = new Notification.Builder(this, CHANNEL_ID)
+                .setContentTitle("Tracking Service")
+                .setContentText("Tracking location in progress...")
+                .setSmallIcon(android.R.drawable.ic_menu_mylocation) // Assicurati di avere un'icona appropriata
+                .setContentIntent(pendingIntent)
+                .build();
+
+        // Avvia il servizio come foreground service
+        startForeground(1, notification);
         // Inizializza il FusedLocationProviderClient
         fusedLocationClient = LocationServices.getFusedLocationProviderClient(this);
 
@@ -60,24 +81,25 @@ public class TrackingService extends Service {
                         Intent intent = new Intent(ACTION_COORDINATE_UPDATE);
                         intent.putExtra(EXTRA_COORDINATE, coordinate);
                         sendBroadcast(intent);
+
                     }
                 }
             }
         };
 
-        // Registra il BroadcastReceiver per lo stop del tracking
-        stopTrackingReceiver = new BroadcastReceiver() {
-            @Override
-            public void onReceive(Context context, Intent intent) {
-                if (intent != null && ACTION_STOP_TRACKING.equals(intent.getAction())) {
-                    // Interrompe la raccolta delle coordinate
-                    stopLocationUpdates();
-                }
-            }
-        };
-
-        IntentFilter filter = new IntentFilter(ACTION_STOP_TRACKING);
-        registerReceiver(stopTrackingReceiver, filter);
+//        // Registra il BroadcastReceiver per lo stop del tracking
+//        stopTrackingReceiver = new BroadcastReceiver() {
+//            @Override
+//            public void onReceive(Context context, Intent intent) {
+//                if (intent != null && ACTION_STOP_TRACKING.equals(intent.getAction())) {
+//                    // Interrompe la raccolta delle coordinate
+//                    stopLocationUpdates();
+//                }
+//            }
+//        };
+//
+//        IntentFilter filter = new IntentFilter(ACTION_STOP_TRACKING);
+//        registerReceiver(stopTrackingReceiver, filter);
 
         // Richiedi gli aggiornamenti della posizione
         startLocationUpdates(locationRequest);
@@ -111,9 +133,13 @@ public class TrackingService extends Service {
             Log.d(TAG, "Location updates stopped");
 
             // Invia un Intent di Broadcast per aggiornare lo stato a STOP
-            Intent stopIntent = new Intent(ACTION_STOP_TRACKING);
-            sendBroadcast(stopIntent);
+//            Intent stopIntent = new Intent(MainActivity.STOP_DISPLAY_TRACKING);
+//            sendBroadcast(stopIntent);
+
+
         }
+        Intent intent = new Intent(MainActivity.STOP_DISPLAY_TRACKING);
+        sendBroadcast(intent);
     }
 
     @Override
@@ -121,11 +147,27 @@ public class TrackingService extends Service {
         super.onDestroy();
         // Rimuovi gli aggiornamenti della posizione e annulla la registrazione del BroadcastReceiver
         stopLocationUpdates();
-        unregisterReceiver(stopTrackingReceiver);
+
+
     }
 
     @Override
     public IBinder onBind(Intent intent) {
         return null;
     }
+    private void createNotificationChannel() {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            NotificationChannel serviceChannel = new NotificationChannel(
+                    CHANNEL_ID,
+                    "Tracking Service Channel",
+                    NotificationManager.IMPORTANCE_DEFAULT
+            );
+            NotificationManager manager = getSystemService(NotificationManager.class);
+            if (manager != null) {
+                manager.createNotificationChannel(serviceChannel);
+            }
+        }
+    }
+
+
 }
